@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гараж Империя 🚗</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #d97706;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-full {
+            grid-column: 1 / -1;
+        }
+
+        .item {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #e5e7eb;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .item-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .item-action {
+            display: flex;
+            gap: 8px;
+        }
+
+        .small-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .modal-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-item-info h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .modal-item-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .modal-item-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .close-modal {
+            background: #ef4444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+            z-index: 2000;
+        }
+
+        .notification.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .day-counter {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Гараж Империя</h1>
+            <div class="day-counter">Ден: <span id="dayCounter">1</span></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">💰 Пари</div>
+                <div class="stat-value" id="money">5000</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🏠 Къща</div>
+                <div class="stat-value" id="houseStatus">❌</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🚗 Коли</div>
+                <div class="stat-value" id="carCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">⭐ Репутация</div>
+                <div class="stat-value" id="reputation">0</div>
+            </div>
+        </div>
+
+        <!-- РАБОТА -->
+        <div class="section">
+            <div class="section-title">💼 Работа</div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="work('easy')">Лесна (500лв)</button>
+                <button class="btn btn-success" onclick="work('medium')">Средна (1000лв)</button>
+            </div>
+            <button class="btn btn-success btn-full" onclick="work('hard')">Трудна (2000лв)</button>
+            <div id="workStatus"></div>
+        </div>
+
+        <!-- КЪЩА -->
+        <div class="section">
+            <div class="section-title">🏠 Жилище</div>
+            <div id="houseSection">
+                <button class="btn btn-primary btn-full" onclick="openHouseShop()">Купи Къща (15000лв)</button>
+            </div>
+            <div id="houseOwned" style="display: none;">
+                <p id="houseMaintenance"></p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="houseCondition"></div>
+                </div>
+                <button class="btn btn-warning btn-full" onclick="repairHouse()">Поправи Къща (2000лв)</button>
+            </div>
+        </div>
+
+        <!-- ГАРАЖ И КОЛИ -->
+        <div class="section">
+            <div class="section-title">🚗 Гараж</div>
+            <button class="btn btn-primary btn-full" onclick="openCarShop()">Купи Кола</button>
+            <div id="garage"></div>
+        </div>
+
+        <!-- ПАРКИНГ -->
+        <div class="section">
+            <div class="section-title">🅿️ Паркинг</div>
+            <button class="btn btn-primary btn-full" onclick="openParking()">Виж Паркинга</button>
+            <div id="parkingStatus"></div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div class="section">
+            <div class="section-title">📊 Прогрес</div>
+            <div id="progressInfo"></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛИ -->
+    <div class="modal" id="carShopModal">
+        <div class="modal-content">
+            <div class="modal-header">🚗 Магазин Коли</div>
+            <div id="carShopList"></div>
+            <button class="close-modal" onclick="closeCarShop()">Затвори</button>
+        </div>
+    </div>
+
+    <div class="modal" id="houseShopModal">
+        <div class="modal-content">
+            <div class="modal-header">🏠 Магазин Къщи</div>
+            <div id="houseShopList"></div>
+            <button class="close-modal" onclick="closeHouseShop()">Затвори</button>
+        </div>
+    </div>
+
+    <div class="modal" id="parkingModal">
+        <div class="modal-content">
+            <div class="modal-header">🅿️ Паркинг</div>
+            <div id="parkingList"></div>
+            <button class="close-modal" onclick="closeParking()">Затвори</button>
+        </div>
+    </div>
+
+    <script>
+        // ИГРОВИ ДАННИ
+        const CARS = [
+            { id: 1, name: 'Fiat Panda', price: 3000, consumption: 5, max_fuel: 40, speed: 2 },
+            { id: 2, name: 'Toyota Corolla', price: 8000, consumption: 6, max_fuel: 50, speed: 3 },
+            { id: 3, name: 'BMW 320i', price: 15000, consumption: 8, max_fuel: 60, speed: 5 },
+            { id: 4, name: 'Mercedes C-Class', price: 25000, consumption: 10, max_fuel: 70, speed: 7 },
+            { id: 5, name: 'Tesla Model 3', price: 35000, consumption: 2, max_fuel: 80, speed: 9 },
+        ];
+
+        const HOUSES = [
+            { id: 1, name: 'Апартамент', price: 15000, maintenance: 200 },
+            { id: 2, name: 'Къща', price: 40000, maintenance: 400 },
+            { id: 3, name: 'Вила', price: 100000, maintenance: 800 },
+        ];
+
+        let gameState = {
+            money: 5000,
+            day: 1,
+            house: null,
+            cars: [],
+            parked_cars: [],
+            reputation: 0,
+            house_condition: 100,
+        };
+
+        // ИНИЦИАЛИЗАЦИЯ
+        function init() {
+            loadGame();
+            updateUI();
+        }
+
+        // ЗАПАЗИ И ЗАРЕДНИ ИГРА
+        function saveGame() {
+            localStorage.setItem('garageGame', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('garageGame');
+            if (saved) {
+                gameState = JSON.parse(saved);
+            }
+        }
+
+        // РАБОТА
+        function work(difficulty) {
+            let pay = 0;
+            let fatigue = 0;
+
+            if (difficulty === 'easy') {
+                pay = 500;
+                fatigue = 1;
+            } else if (difficulty === 'medium') {
+                pay = 1000;
+                fatigue = 2;
+            } else if (difficulty === 'hard') {
+                pay = 2000;
+                fatigue = 3;
+            }
+
+            gameState.money += pay;
+            gameState.day += fatigue;
+            gameState.reputation += 1;
+            
+            showNotification(`Спечели ${pay}лв! (+${fatigue} дни)`);
+            updateUI();
+            saveGame();
+        }
+
+        // ОБСЛУЖВАНЕ
+        function dailyMaintenance() {
+            if (gameState.house) {
+                gameState.money -= gameState.house.maintenance;
+                gameState.house_condition -= 5;
+                if (gameState.house_condition < 0) gameState.house_condition = 0;
+            }
+
+            gameState.cars.forEach(car => {
+                gameState.money -= 100; // Гориво и поддръжка
+                car.fuel -= 2;
+                if (car.fuel < 0) car.fuel = 0;
+            });
+        }
+
+        // КУПИ КЪЩА
+        function openHouseShop() {
+            const list = document.getElementById('houseShopList');
+            list.innerHTML = '';
+
+            HOUSES.forEach(house => {
+                if (!gameState.house || gameState.house.id !== house.id) {
+                    const div = document.createElement('div');
+                    div.className = 'modal-item';
+                    div.innerHTML = `
+                        <div class="modal-item-info">
+                            <h3>${house.name}</h3>
+                            <p>Поддръжка: ${house.maintenance}лв/ден</p>
+                        </div>
+                        <div>
+                            <div class="modal-item-price">${house.price}лв</div>
+                            <button class="small-btn btn-success" onclick="buyHouse(${house.id})">Купи</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                }
+            });
+
+            if (gameState.house) {
+                const div = document.createElement('div');
+                div.className = 'modal-item';
+                const h = HOUSES.find(h => h.id === gameState.house.id);
+                div.innerHTML = `
+                    <div class="modal-item-info">
+                        <h3>✅ ${h.name}</h3>
+                        <p>Твоята къща</p>
+                    </div>
+                `;
+                list.appendChild(div);
+            }
+
+            document.getElementById('houseShopModal').classList.add('active');
+        }
+
+        function closeHouseShop() {
+            document.getElementById('houseShopModal').classList.remove('active');
+        }
+
+        function buyHouse(houseId) {
+            const house = HOUSES.find(h => h.id === houseId);
+            if (gameState.money >= house.price) {
+                gameState.money -= house.price;
+                gameState.house = house;
+                gameState.house_condition = 100;
+                showNotification(`Купи ${house.name}! 🏠`);
+                closeHouseShop();
+                updateUI();
+                saveGame();
+            } else {
+                showNotification('Нямаш достатъчно пари!', true);
+            }
+        }
+
+        function repairHouse() {
+            if (gameState.house && gameState.money >= 2000) {
+                gameState.money -= 2000;
+                gameState.house_condition = 100;
+                showNotification('Състо почистена къща! ✨');
+                updateUI();
+                saveGame();
+            } else {
+                showNotification('Нямаш пари за поправка!', true);
+            }
+        }
+
+        // КУПИ КОЛА
+        function openCarShop() {
+            const list = document.getElementById('carShopList');
+            list.innerHTML = '';
+
+            CARS.forEach(car => {
+                const div = document.createElement('div');
+                div.className = 'modal-item';
+                div.innerHTML = `
+                    <div class="modal-item-info">
+                        <h3>${car.name}</h3>
+                        <p>Консумация: ${car.consumption}л/100км</p>
+                        <p>Скорост: ${'⭐'.repeat(car.speed)}</p>
+                    </div>
+                    <div>
+                        <div class="modal-item-price">${car.price}лв</div>
+                        <button class="small-btn btn-success" onclick="buyCar(${car.id})">Купи</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+
+            document.getElementById('carShopModal').classList.add('active');
+        }
+
+        function closeCarShop() {
+            document.getElementById('carShopModal').classList.remove('active');
+        }
+
+        function buyCar(carId) {
+            const carTemplate = CARS.find(c => c.id === carId);
+            if (gameState.money >= carTemplate.price) {
+                gameState.money -= carTemplate.price;
+                const newCar = {
+                    ...carTemplate,
+                    id: Date.now(),
+                    fuel: carTemplate.max_fuel,
+                    mileage: 0,
+                    parked: true
+                };
+                gameState.cars.push(newCar);
+                gameState.parked_cars.push(newCar.id);
+                showNotification(`Купи ${carTemplate.name}! 🚗`);
+                closeCarShop();
+                updateUI();
+                saveGame();
+            } else {
+                showNotification('Нямаш достатъчно пари!', true);
+            }
+        }
+
+        // ПАРКИНГ
+        function openParking() {
+            const list = document.getElementById('parkingList');
+            list.innerHTML = '';
+
+            gameState.cars.forEach(car => {
+                const carTemplate = CARS.find(c => c.id === car.id);
+                const div = document.createElement('div');
+                div.className = 'modal-item';
+                div.innerHTML = `
+                    <div class="modal-item-info">
+                        <h3>${carTemplate.name}</h3>
+                        <p>Гориво: ${car.fuel}/${carTemplate.max_fuel}л</p>
+                        <p>Километраж: ${car.mileage}км</p>
+                    </div>
+                    <div>
+                        <button class="small-btn btn-warning" onclick="refuelCar(${car.id})">Зареди</button>
+                        <button class="small-btn btn-danger" onclick="sellCar(${car.id})">Продай</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+
+            if (gameState.cars.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #666;">Нямаш коли. Купи някоя! 🚗</p>';
+            }
+
+            document.getElementById('parkingModal').classList.add('active');
+        }
+
+        function closeParking() {
+            document.getElementById('parkingModal').classList.remove('active');
+        }
+
+        function refuelCar(carId) {
+            const car = gameState.cars.find(c => c.id === carId);
+            const carTemplate = CARS.find(c => c.id === car.id);
+            if (gameState.money >= 500) {
+                gameState.money -= 500;
+                car.fuel = carTemplate.max_fuel;
+                showNotification(`Пълен танк! ⛽`);
+                updateUI();
+                saveGame();
+            } else {
+                showNotification('Нямаш пари за гориво!', true);
+            }
+        }
+
+        function sellCar(carId) {
+            const carIdx = gameState.cars.findIndex(c => c.id === carId);
+            const carTemplate = CARS.find(c => c.id === gameState.cars[carIdx].id);
+            const sellPrice = Math.floor(carTemplate.price * 0.7);
+            
+            gameState.money += sellPrice;
+            gameState.cars.splice(carIdx, 1);
+            gameState.parked_cars = gameState.parked_cars.filter(id => id !== carId);
+            
+            showNotification(`Продаде кола за ${sellPrice}лв`);
+            updateUI();
+            saveGame();
+        }
+
+        // УВЕДОМЛЕНИЯ
+        function showNotification(message, isError = false) {
+            const notif = document.createElement('div');
+            notif.className = `notification ${isError ? 'error' : ''}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+
+        // ОБНОВЯВАНЕ НА UI
+        function updateUI() {
+            // Ежедневна поддръжка
+            dailyMaintenance();
+
+            // Пари
+            document.getElementById('money').textContent = gameState.money + 'лв';
+            document.getElementById('dayCounter').textContent = gameState.day;
+
+            // Къща
+            if (gameState.house) {
+                document.getElementById('houseStatus').textContent = '✅';
+                document.getElementById('houseSection').style.display = 'none';
+                document.getElementById('houseOwned').style.display = 'block';
+                
+                const condition = Math.max(0, gameState.house_condition);
+                document.getElementById('houseMaintenance').textContent = 
+                    `${gameState.house.name} - Състояние: ${Math.round(condition)}%`;
+                
+                document.getElementById('houseCondition').style.width = condition + '%';
+                
+                if (gameState.house_condition < 30) {
+                    document.getElementById('houseMaintenance').style.color = '#ef4444';
+                }
+            } else {
+                document.getElementById('houseStatus').textContent = '❌';
+                document.getElementById('houseSection').style.display = 'block';
+                document.getElementById('houseOwned').style.display = 'none';
+            }
+
+            // Коли
+            document.getElementById('carCount').textContent = gameState.cars.length;
+            document.getElementById('reputation').textContent = gameState.reputation;
+
+            // Гараж список
+            const garage = document.getElementById('garage');
+            if (gameState.cars.length > 0) {
+                garage.innerHTML = gameState.cars.map(car => {
+                    const carTemplate = CARS.find(c => c.id === car.id);
+                    return `
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-name">${carTemplate.name}</div>
+                                <div class="item-details">⛽ ${car.fuel}/${carTemplate.max_fuel}л | 🛣️ ${car.mileage}км</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                garage.innerHTML = '<p style="color: #666; text-align: center;">Купи първа кола!</p>';
+            }
+
+            // Паркинг статус
+            document.getElementById('parkingStatus').textContent = 
+                `${gameState.parked_cars.length} коли в паркинга`;
+
+            // Прогрес
+            document.getElementById('progressInfo').innerHTML = `
+                <div style="font-size: 14px; line-height: 1.8;">
+                    <p>🏆 Репутация: ${gameState.reputation}/50</p>
+                    <p>💼 Дни работил: ${gameState.day}</p>
+                    <p>🚗 Колекция: ${gameState.cars.length}/${CARS.length}</p>
+                    <p>🏠 Имоти: ${gameState.house ? gameState.house.name : 'Без къща'}</p>
+                </div>
+            `;
+
+            saveGame();
+        }
+
+        // СТАРТ
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
